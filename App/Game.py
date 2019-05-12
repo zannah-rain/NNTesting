@@ -1,4 +1,5 @@
 import pygame
+from App.Classes.ExampleRectangle import ExampleRectangle
 
 pygame.init()
 
@@ -17,6 +18,9 @@ y = 50
 width = 40
 height = 60
 speed = 5
+
+exampleRectangle = ExampleRectangle(100, 100, 20, 20)
+print(exampleRectangle.x)
 
 # Keep running until user clicks the exit button
 running = True
