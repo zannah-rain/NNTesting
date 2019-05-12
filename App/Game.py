@@ -50,6 +50,7 @@ while running:
 
     # Draws the example rectangle
     pygame.draw.rect(window, (255, 0, 0), (x, y, width, height))
+    exampleRectangle.draw(window)
 
     # Sends update to the actual window
     pygame.display.update()
