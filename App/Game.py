@@ -39,7 +39,7 @@ running = True
 while running:
 
     # Initial frame rate limit
-    pygame.time.delay(100)
+    # pygame.time.delay(100)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -72,15 +72,13 @@ while running:
                              (x * CELL_WIDTH, y * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT))
 
     # Propagate heat
-    new_temperature_map = temperature_map
-    new_temperature_map[1:, :] = ((new_temperature_map[1:, :] * HEAT_SLOWNESS) + new_temperature_map[:-1, :]) / (
-                HEAT_SLOWNESS + 1)
-    new_temperature_map[:-1, :] = ((new_temperature_map[:-1, :] * HEAT_SLOWNESS) + new_temperature_map[1:, :]) / (
-                HEAT_SLOWNESS + 1)
-    new_temperature_map[:, 1:] = ((new_temperature_map[:, 1:] * HEAT_SLOWNESS) + new_temperature_map[:, :-1]) / (
-                HEAT_SLOWNESS + 1)
-    new_temperature_map[:, :-1] = ((new_temperature_map[:, :-1] * HEAT_SLOWNESS) + new_temperature_map[:, 1:]) / (
-                HEAT_SLOWNESS + 1)
+    new_temperature_map = temperature_map.copy() * HEAT_SLOWNESS
+    new_temperature_map[1:, :] += temperature_map[:-1, :]
+    new_temperature_map[:-1, :] += temperature_map[1:, :]
+    new_temperature_map[:, 1:] += temperature_map[:, :-1]
+    new_temperature_map[:, :-1] += temperature_map[:, 1:]
+    new_temperature_map /= HEAT_SLOWNESS + 4
+    temperature_map = new_temperature_map
 
     # Add the heatmap to the visible surface
     window.blit(temperature_surface, (0, 0))
