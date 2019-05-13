@@ -1,6 +1,7 @@
 import pygame
 import numpy as np
 from App.Classes.ExampleRectangle import ExampleRectangle
+from App.Classes.HeatMap import HeatMap
 
 pygame.init()
 
@@ -21,7 +22,7 @@ pygame.display.set_caption('BrainChild')
 exampleRectangle = ExampleRectangle(100, 100, 20, 20)
 
 # Create various map layers
-temperature_map = np.random.rand(N_CELLS, N_CELLS)
+heatMap = HeatMap(N_CELLS, CELL_WIDTH, CELL_HEIGHT, HEAT_SLOWNESS)
 
 # A target surface to draw temp related stuff to
 temperature_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -47,20 +48,10 @@ while running:
     exampleRectangle.draw(window)
 
     # Draw heatmap
-    for x in range(0, N_CELLS):
-        for y in range(0, N_CELLS):
-            pygame.draw.rect(temperature_surface,
-                             (temperature_map[x, y] * 255, 0, 0),
-                             (x * CELL_WIDTH, y * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT))
+    heatMap.draw(temperature_surface)
 
     # Propagate heat
-    new_temperature_map = temperature_map.copy() * HEAT_SLOWNESS
-    new_temperature_map[1:, :] += temperature_map[:-1, :]
-    new_temperature_map[:-1, :] += temperature_map[1:, :]
-    new_temperature_map[:, 1:] += temperature_map[:, :-1]
-    new_temperature_map[:, :-1] += temperature_map[:, 1:]
-    new_temperature_map /= HEAT_SLOWNESS + 4
-    temperature_map = new_temperature_map
+    heatMap.step()
 
     # Add the heatmap to the visible surface
     window.blit(temperature_surface, (0, 0))
