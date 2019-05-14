@@ -2,6 +2,7 @@ import pygame
 import numpy as np
 from App.Classes.ExampleRectangle import ExampleRectangle
 from App.Classes.HeatMap import HeatMap
+from App.Classes.Agent import Agent
 
 pygame.init()
 
@@ -20,6 +21,9 @@ pygame.display.set_caption('BrainChild')
 
 # Instantiate an ExampleRectangle
 exampleRectangle = ExampleRectangle(100, 100, 20, 20)
+
+# Instantiate some example Agents
+agentList = [Agent(50, 100), Agent(100, 50), Agent(100, 100)]
 
 # Create various map layers
 heatMap = HeatMap(N_CELLS, CELL_WIDTH, CELL_HEIGHT, HEAT_SLOWNESS)
@@ -41,11 +45,17 @@ while running:
     # Update the example rectangle
     exampleRectangle.step(keys)
 
+    for i in agentList:
+        i.step()
+
     # Fills the window with the background colour
     window.fill(BACKGROUND_COLOUR)
 
     # Draws the example rectangle
     exampleRectangle.draw(window)
+
+    for i in agentList:
+        i.draw(window)
 
     # Draw heatmap
     heatMap.draw(temperature_surface)
