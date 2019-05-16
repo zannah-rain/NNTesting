@@ -1,5 +1,5 @@
 import pygame
-import numpy as np
+import tensorflow as tf
 from App.Classes.ExampleRectangle import ExampleRectangle
 from App.Classes.HeatMap import HeatMap
 from App.Classes.Agent import Agent
@@ -22,9 +22,6 @@ pygame.display.set_caption('BrainChild')
 # Instantiate an ExampleRectangle
 exampleRectangle = ExampleRectangle(100, 100, 20, 20)
 
-# Instantiate some example Agents
-agentList = [Agent(50, 100), Agent(100, 50), Agent(100, 100)]
-
 # Create various map layers
 heatMap = HeatMap(N_CELLS, CELL_WIDTH, CELL_HEIGHT, HEAT_SLOWNESS)
 
@@ -32,41 +29,45 @@ heatMap = HeatMap(N_CELLS, CELL_WIDTH, CELL_HEIGHT, HEAT_SLOWNESS)
 temperature_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
 temperature_surface.set_alpha(64)  # Up to 128
 
-# Keep running until user clicks the exit button
-running = True
-while running:
+with tf.Session() as sess:
+    # Instantiate some example Agents
+    agentList = [Agent(50, 100, sess, heatMap), Agent(100, 50, sess, heatMap), Agent(100, 100, sess, heatMap)]
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+    # Keep running until user clicks the exit button
+    running = True
+    while running:
 
-    keys = pygame.key.get_pressed()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-    # Update the example rectangle
-    exampleRectangle.step(keys)
+        keys = pygame.key.get_pressed()
 
-    for i in agentList:
-        i.step()
+        # Update the example rectangle
+        exampleRectangle.step(keys)
 
-    # Fills the window with the background colour
-    window.fill(BACKGROUND_COLOUR)
+        for i in agentList:
+            i.step()
 
-    # Draws the example rectangle
-    exampleRectangle.draw(window)
+        # Fills the window with the background colour
+        window.fill(BACKGROUND_COLOUR)
 
-    for i in agentList:
-        i.draw(window)
+        # Draws the example rectangle
+        exampleRectangle.draw(window)
 
-    # Draw heatmap
-    heatMap.draw(temperature_surface)
+        for i in agentList:
+            i.draw(window)
 
-    # Propagate heat
-    heatMap.step()
+        # Draw heatmap
+        heatMap.draw(temperature_surface)
 
-    # Add the heatmap to the visible surface
-    window.blit(temperature_surface, (0, 0))
+        # Propagate heat
+        heatMap.step()
 
-    # Sends update to the actual window
-    pygame.display.update()
+        # Add the heatmap to the visible surface
+        window.blit(temperature_surface, (0, 0))
+
+        # Sends update to the actual window
+        pygame.display.update()
 
 pygame.quit()

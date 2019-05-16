@@ -27,3 +27,23 @@ class HeatMap:
         new_temperature_map[:, :-1] += self.temperature_map[:, 1:]
         new_temperature_map /= self.heat_slowness + 4
         self.temperature_map = new_temperature_map
+
+    def transform_coordinates(self, x, y):
+        return int(x / self.cell_width), int(y / self.cell_height)
+
+    def get_temperature(self, x, y):
+        x2, y2 = self.transform_coordinates(x, y)
+        return self.temperature_map[x2, y2]
+
+    def get_temperature_area(self, x, y, width, height):
+        x2, y2 = self.transform_coordinates(x, y)
+
+        # Might be missing some rows / columns if near the edge of the map
+        basic_area = self.temperature_map[x2 - width:x2 + width + 1, y2 - height:y2 + height + 1]
+
+        # Pad off the map areas with 0s
+        # if x < width:
+        #    basic_area = np.concatenate((np.zeros((height * 2 + 1, 1)), basic_area), axis=1)
+        # if y < height:
+        #    basic_area = np.concatenate((np.zeros((1, width * 2 + 1)), basic_area), axis=1)
+        return basic_area
