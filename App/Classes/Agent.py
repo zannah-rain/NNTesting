@@ -12,15 +12,15 @@ class Agent:
         self.y = y
         self.colour = (0, 255, 0)
 
-        self._brain = Model(9, 9, 20)
+        self._brain = Model(9, 9, 500)
         self._brain.initialize_tensorflow(sess)
 
-        self._memory = Memory(100)
+        self._memory = Memory(2000)
         self._sess = sess
         self._max_epsilon = 0.9
-        self._min_epsilon = 0.01
+        self._min_epsilon = 0.2
         self._epsilon = self._max_epsilon
-        self._epsilon_decay_time = 100
+        self._epsilon_decay_time = 10000
         self._heat_map = heat_map
         self._steps = 0  # Just a timer
         self._score = self.calculate_score()
@@ -40,7 +40,7 @@ class Agent:
         # Select & perform a movement action
         action = self.choose_action(state)
         new_x = self.x + (action % 3) - 1
-        new_y = self.y + (action / 3) - 1
+        new_y = self.y + int(action / 3) - 1
         self.move_to(new_x, new_y)
 
         self._next_state = self.build_state()
@@ -71,10 +71,12 @@ class Agent:
         return self._heat_map.get_temperature_area(self.x, self.y, 1, 1)
 
     def choose_action(self, state):
+        predictions = self._brain.predict_one(state, self._sess)[0]
         if random.random() < self._epsilon:
-            return random.randint(0, self._brain.num_actions - 1)
+            predictions = np.exp(predictions)
+            return np.random.choice(9, p=predictions / predictions.sum())
         else:
-            return np.argmax(self._brain.predict_one(state, self._sess))
+            return np.argmax(predictions)
 
     def calculate_score(self):
         return self._heat_map.get_temperature(self.x, self.y)

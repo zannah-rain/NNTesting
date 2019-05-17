@@ -33,9 +33,12 @@ with tf.Session() as sess:
     # Instantiate some example Agents
     agentList = [Agent(50, 100, sess, heatMap), Agent(100, 50, sess, heatMap), Agent(100, 100, sess, heatMap)]
 
+    step = 0
+
     # Keep running until user clicks the exit button
     running = True
     while running:
+        step += 1
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -62,7 +65,8 @@ with tf.Session() as sess:
         heatMap.draw(temperature_surface)
 
         # Propagate heat
-        heatMap.step()
+        if step < 50:
+            heatMap.step()
 
         # Add the heatmap to the visible surface
         window.blit(temperature_surface, (0, 0))

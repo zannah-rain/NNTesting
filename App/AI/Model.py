@@ -24,7 +24,7 @@ class Model:
         fc2 = tf.layers.dense(fc1, 50, activation=tf.nn.relu)
         self._logits = tf.layers.dense(fc2, self.num_actions)
         loss = tf.losses.mean_squared_error(self._q_s_a, self._logits)
-        self._optimizer = tf.train.AdamOptimizer().minimize(loss)
+        self._optimizer = tf.train.AdamOptimizer(learning_rate=0.01).minimize(loss)
         self._var_init = tf.global_variables_initializer()
 
     def initialize_tensorflow(self, sess):

@@ -6,7 +6,13 @@ class HeatMap:
 
     def __init__(self, n_cells, cell_width, cell_height, heat_slowness):
         self.n_cells = n_cells
-        self.temperature_map = np.random.rand(n_cells, n_cells)
+        self.temperature_map = np.zeros((n_cells, n_cells))
+        for i in range(n_cells):
+            for j in range(n_cells):
+                self.temperature_map[i, j] = (abs(i - n_cells/2) * 3) + abs(j - n_cells/2)
+        self.temperature_map = (self.temperature_map.max() - self.temperature_map) / self.temperature_map.max()
+        self.temperature_map += np.random.rand(n_cells, n_cells)
+        self.temperature_map = self.temperature_map / self.temperature_map.max()
         self.cell_width = cell_width
         self.cell_height = cell_height
         self.heat_slowness = heat_slowness
