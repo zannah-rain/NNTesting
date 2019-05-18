@@ -31,7 +31,17 @@ temperature_surface.set_alpha(64)  # Up to 128
 
 with tf.Session() as sess:
     # Instantiate some example Agents
-    agentList = [Agent(50, 100, sess, heatMap), Agent(100, 50, sess, heatMap), Agent(100, 100, sess, heatMap)]
+    agentList = []
+    for i in range(10):
+        agentList.append(Agent(50, 50, sess, heatMap))
+    for i in range(10):
+        agentList.append(Agent(50,
+                               50,
+                               sess,
+                               heatMap,
+                               colour=(0, 0, 255),
+                               output_activation=tf.nn.relu,
+                               rotation_sampling=True))
 
     step = 0
 
